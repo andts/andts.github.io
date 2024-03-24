@@ -1,7 +1,8 @@
 +++
-title = "Home"
-paginate_by = 5 # Set the number of posts per page
-template = "index.html"
+[extra]
+header = {title = "Welcome" }
+section_path = "posts/_index.md"
+max_posts = 5
 +++
 
 Hello World!

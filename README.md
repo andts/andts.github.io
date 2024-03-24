@@ -1,2 +1,1 @@
-# andts.github.io
-tsvldb blog
+Sources for [tsvldb.com](tsvldb.com) blog
