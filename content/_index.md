@@ -1,8 +1,8 @@
 +++
 [extra]
-header = {title = "Welcome" }
+header = {title = "Boring stuff" }
 section_path = "posts/_index.md"
 max_posts = 5
 +++
 
-Hello World!
+Working in test mode

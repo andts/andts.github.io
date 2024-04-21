@@ -13,6 +13,6 @@ smart_punctuation = true
 [extra]
 menu = [
     { name = "Posts", url = "posts", trailing_slash = true },
-    { name = "Projects", url = "projects", trailing_slash = true },
-    { name = "About Me", url = "about-me", trailing_slash = true },
+#    { name = "Projects", url = "projects", trailing_slash = true },
+#    { name = "About Me", url = "about-me", trailing_slash = true },
 ]
