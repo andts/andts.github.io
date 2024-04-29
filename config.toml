@@ -20,3 +20,4 @@ menu = [
 [extra.analytics]
 service = "umami"
 id = "f0e51e52-1de4-4abe-9cdb-dac6967c3ae0"
+self_hosted_url = "https://eu.umami.is/"
