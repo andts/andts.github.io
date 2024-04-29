@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="https://tsvldb.com/sitemap_style.xsl" type="text/xsl"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://tsvldb.com/</loc>
+    </url>
+    <url>
+        <loc>https://tsvldb.com/about-me/</loc>
+    </url>
+    <url>
+        <loc>https://tsvldb.com/first/</loc>
+    </url>
+    <url>
+        <loc>https://tsvldb.com/posts/</loc>
+    </url>
+    <url>
+        <loc>https://tsvldb.com/posts/cdc-dms-kafka/</loc>
+        <lastmod>2024-04-28</lastmod>
+    </url>
+    <url>
+        <loc>https://tsvldb.com/posts/page/1/</loc>
+    </url>
+    <url>
+        <loc>https://tsvldb.com/projects/</loc>
+    </url>
+    <url>
+        <loc>https://tsvldb.com/projects/canoe/</loc>
+    </url>
+    <url>
+        <loc>https://tsvldb.com/projects/crystal-duck/</loc>
+    </url>
+</urlset>

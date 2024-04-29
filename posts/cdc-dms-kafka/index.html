@@ -1,0 +1,354 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="base" content="https://tsvldb.com">
+
+    
+    <title>Andrii Tsvielodub • Building a Change Data Capture Pipeline with AWS and Kafka</title>
+
+    
+    
+    
+
+    
+    <link rel="alternate" type="application/atom+xml" title="Andrii Tsvielodub" href="https://tsvldb.com/atom.xml">
+
+    
+    
+    
+        <link rel="stylesheet" href="https://tsvldb.com/inter_subset_en.css?h=d8cf4ad058d6c3a4015b">
+    
+
+    
+        <link rel="stylesheet" href="https://tsvldb.com/main.css?h=02ca21c9df2f4804964c" />
+
+    <meta name="color-scheme" content="light dark" />
+        <meta name="description" content="This blog post provides a step-by-step guide on how to build and configure a change data capture pipeline that captures all changes in a database and writes them into an audit log table in a useful format. The post covers the architecture of the pipeline, services used, and tips on how to set up each component." />
+        <meta property="og:description" content="This blog post provides a step-by-step guide on how to build and configure a change data capture pipeline that captures all changes in a database and writes them into an audit log table in a useful format. The post covers the architecture of the pipeline, services used, and tips on how to set up each component." />
+
+    
+        <meta name="robots" content="index, nofollow" />
+    
+
+    <meta property="og:title" content="Building a Change Data Capture Pipeline with AWS and Kafka" />
+    <meta property="og:type" content="article" />
+
+    
+
+    <meta property="og:locale" content="en_GB" />
+
+    <meta property="og:url" content="https:&#x2F;&#x2F;tsvldb.com&#x2F;posts&#x2F;cdc-dms-kafka&#x2F;" /><meta property="og:site_name" content="Andrii Tsvielodub"><meta http-equiv="Content-Security-Policy"
+content="default-src 'self';font-src &#x27;self&#x27; data:;img-src &#x27;self&#x27; https:&#x2F;&#x2F;* data:;media-src &#x27;self&#x27;;style-src &#x27;self&#x27;;frame-src player.vimeo.com https:&#x2F;&#x2F;www.youtube-nocookie.com;connect-src 'self' analytics.eu.umami.is api-gateway-eu.umami.dev;script-src 'self' analytics.eu.umami.is eu.umami.is 'self'">
+
+        <noscript><link rel="stylesheet" href="https://tsvldb.com/no_js.css"/></noscript>
+        <script type="text/javascript" src="https://tsvldb.com/js/initializeTheme.min.js"></script>
+        <script defer src="https://tsvldb.com/js/themeSwitcher.min.js"></script>
+
+
+
+
+<script defer
+        
+        data-website-id="f0e51e52-1de4-4abe-9cdb-dac6967c3ae0"
+        src="https://eu.umami.is/script.js"
+        >
+</script>
+
+
+<script defer src="https://tsvldb.com/search_index.en.js?h=80a67bb45d5c722931ea"></script>
+        <script defer src="https://tsvldb.com/js/searchElasticlunr.min.js?h=2950d57f80c9fa78f37e"></script>
+
+        </head>
+
+
+<body>
+    <header>
+    <nav class="navbar">
+        <div class="nav-title">
+            <a class="home-title" href=https://tsvldb.com>Andrii Tsvielodub</a>
+        </div>
+            <div class="nav-navs">
+                <ul>
+                        
+                            <li>
+                                
+                                <a class="nav-links no-hover-padding" href="https://tsvldb.com/posts/">
+                                Posts
+                                </a>
+                            </li>
+                        <li class="js">
+                        <div role="button" tabindex="0" id="search-button" class="search-icon interactive-icon" title="Click or press $SHORTCUT to open search" aria-label="Click or press $SHORTCUT to open search">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+                                <path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/>
+                            </svg>
+                        </div>
+                    </li>
+
+                    
+                    
+
+                    <li class="theme-switcher-wrapper js"><div
+        title="Toggle dark&#x2F;light mode"
+        class="theme-switcher"
+        tabindex="0"
+        role="button"
+        aria-label="Toggle dark mode"
+        aria-pressed="false">
+    </div><div
+        title="Reset mode to default"
+        class="theme-resetter"
+        tabindex="0"
+        role="button"
+        aria-hidden="true"
+        aria-label="Reset mode to default">
+    </div>
+
+</li>
+</ul>
+            </div>
+        
+    </nav>
+</header>
+
+    <div class="content">
+
+        
+        
+
+
+
+
+<main>
+    <article>
+        <h1 class="article-title">
+            Building a Change Data Capture Pipeline with AWS and Kafka
+        </h1>
+
+        <ul class="meta">
+            
+
+            
+                <li>
+
+
+
+
+
+    
+
+    
+        
+        
+            
+        
+    
+
+    
+    28th
+    
+        Apr 2024
+    
+
+
+</li>
+            
+
+            
+            
+                • <li title="371 words">2 min read</li>
+            
+                </ul><ul class="meta last-updated"><li>Last updated on 
+
+
+
+
+
+    
+
+    
+        
+        
+            
+        
+    
+
+    
+    28th
+    
+        Apr 2024
+    
+
+
+</li>
+                
+                
+            
+        </ul>
+
+        
+
+        
+        
+
+        <section class="body">
+            
+            
+            <h1 id="intro">Intro</h1>
+<p>In this post, I will try to write a detailed step-by-step guide on how to build and configure a change data capture
+pipeline that captures all changes in a database and writes them into an audit log table in a useful format.<br />
+<div class="admonition warning">
+    <div class="admonition-icon"></div>
+    <div class="admonition-content">
+        <strong class="admonition-title">WIP</strong>
+        <p>Please note that this post is a work in progress, and some sections may
+be incomplete or require further refinement. I will continue working on it until I feel it is done, and if it currently
+doesn’t have the information you are looking for - be sure to come back later.</p>
+
+    </div>
+</div>
+</p>
+<h1 id="use-case">Use Case</h1>
+<p>The use case for this setup is obviously an auditing system that keeps track of all changes in a database. Where could
+this be useful? One option is using it for security reasons, to track user activity. Another or for activity logging
+with the
+possibility of reviewing changes in some data entity. Probably, it could even be helpful for debugging purposes.</p>
+<h1 id="architecture">Architecture</h1>
+<p><div class="admonition info">
+    <div class="admonition-icon"></div>
+    <div class="admonition-content">
+        <strong class="admonition-title">Architecture</strong>
+        <p>Note that this post is not just an exercise but comes from personal
+working experience, so some architectural decisions were preconditions that couldn’t be changed. There are many ways
+such a pipeline could be implemented, but I will only be talking about what I had experience with.</p>
+
+    </div>
+</div>
+<br />
+The pipeline in this post is built in AWS using the following services:</p>
+<ul>
+<li><strong>Aurora</strong> - a cloud <strong>PostgreSQL</strong>, the primary data source and destination</li>
+<li><strong>Database Migration Service, DMS</strong> - a service that captures and outputs the changes in Aurora</li>
+<li><strong>Managed Streaming for Apache Kafka, MSK with MSK Connect</strong> - a queue (or a stream-processing framework, if you will)
+used to process the stream of data changes. <strong>Kafka Connect</strong> (<strong>MSK Connect</strong> in AWS-land) is a service that will put the
+data into its final destination.</li>
+<li><strong>Kafka Streams App</strong> - a minimal app that transforms events so they are easy to use later. It will be built using
+<strong>Spring Boot</strong> with <strong>Spring Kafka</strong> and run in an <strong>Elastic Container Service (ECS)</strong> cluster.</li>
+</ul>
+<h1 id="the-guide">The Guide</h1>
+<h2 id="step-1-set-up-aurora">Step 1: Set up Aurora</h2>
+<h2 id="step-2-set-up-msk-cluster">Step 2: Set up MSK Cluster</h2>
+<h2 id="step-3-configure-dms-task">Step 3: Configure DMS Task</h2>
+<h2 id="step-4-create-msk-connector">Step 4: Create MSK Connector</h2>
+<h2 id="step-5-build-a-kafka-streams-app">Step 5: Build a Kafka Streams App</h2>
+<h2 id="step-6-test-the-pipeline">Step 6: Test the Pipeline</h2>
+
+        </section>
+
+        
+        
+        
+        
+
+        
+            
+            
+            
+
+            
+        
+            
+            
+            
+
+            
+        
+            
+            
+            
+
+            
+        
+            
+            
+            
+
+            
+        
+
+        
+        
+
+        
+        
+
+    </article>
+</main>
+
+
+<span id="copy-success" class="hidden">
+        Copied!
+    </span>
+    <span id="copy-init" class="hidden">
+        Copy code to clipboard
+    </span>
+    <script defer src="https://tsvldb.com/js/copyCodeToClipboard.min.js"></script>
+    </div>
+    <footer>
+    <section>
+        <nav class="socials nav-navs">
+        </nav>
+
+        
+        <nav class="nav-navs">
+        </nav>
+
+        <div class="credits">
+            <small>
+                
+
+                
+                Powered by
+                <a rel="noopener" target=_blank href="https://www.getzola.org">Zola</a>
+                &amp;
+                <a rel="noopener" target=_blank href="https://github.com/welpo/tabi">tabi</a>
+
+                </small>
+        </div>
+    </section>
+
+    <div id="searchModal" class="search-modal js" role="dialog" aria-labelledby="modalTitle">
+    <h1 id="modalTitle" class="visually-hidden">Search</h1>
+    <div id="modal-content">
+        <div id="searchBar">
+            <div class="search-icon" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+                    <path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/>
+                </svg>
+            </div>
+            <input id="searchInput" role="combobox" autocomplete="off" spellcheck="false" aria-expanded="false" aria-controls="results-container" placeholder="Search…"/>
+            <div id="clear-search" class="close-icon interactive-icon" tabindex="0" role="button" title="Clear search">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+                <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
+                </svg>
+            </div>
+        </div>
+        <div id="results-container">
+            <div id="results-info"><span id="zero_results"> No results</span>
+                <span id="one_results"> $NUMBER result</span>
+                <span id="many_results"> $NUMBER results</span><span id="two_results"> $NUMBER results</span>
+                <span id="few_results"> $NUMBER results</span>
+            </div>
+        <div id="results" role="listbox"></div>
+    </div>
+</div>
+</footer>
+
+</body>
+
+</html>
