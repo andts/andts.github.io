@@ -22,7 +22,7 @@ possibility of reviewing changes in some data entity. Probably, it could even be
 
 # Architecture
 
-{{ admonition(type="info", title="WIP", text="Note that this post is not just an exercise but comes from personal
+{{ admonition(type="info", title="Architecture", text="Note that this post is not just an exercise but comes from personal
 working experience, so some architectural decisions were preconditions that couldn't be changed. There are many ways
 such a pipeline could be implemented, but I will only be talking about what I had experience with.") }}  
 The pipeline in this post is built in AWS using the following services:
